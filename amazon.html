@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amazon Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Ember+Display:wght@300;400;700&family=Amazon+Ember:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/shared/general.css">
+  <link rel="stylesheet" href="styles/shared/amazon-header.css">
+  <link rel="stylesheet" href="styles/pages/amazon.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SIGN-IN MODAL
+══════════════════════════════════════════ -->
+<div class="modal-backdrop" id="signinBackdrop">
+  <div class="signin-modal" id="signinModal">
+    <button class="modal-close-x" id="closeSignin">✕</button>
+    <div class="signin-logo">amaz<span>o</span>n</div>
+
+    <div id="signinView">
+      <h2 class="signin-title">Sign in</h2>
+      <div class="form-group">
+        <label>Email or mobile number</label>
+        <input type="text" id="signinEmail" placeholder="Email or mobile number">
+      </div>
+      <button class="signin-btn" id="continueBtn">Continue</button>
+      <p class="signin-legal">By continuing, you agree to Amazon's <a href="#">Conditions of Use</a> and <a href="#">Privacy Notice</a>.</p>
+      <div class="signin-divider"><span>New to Amazon?</span></div>
+      <button class="create-account-btn" id="goCreateAccount">Create your Amazon account</button>
+    </div>
+
+    <div id="signinPasswordView" style="display:none">
+      <h2 class="signin-title">Sign in</h2>
+      <p class="signin-subtitle" id="signinEmailLabel"></p>
+      <div class="form-group">
+        <label>Password <a href="#" class="forgot-link">Forgot password?</a></label>
+        <input type="password" id="signinPassword" placeholder="Password">
+      </div>
+      <button class="signin-btn" id="doSignin">Sign in</button>
+    </div>
+
+    <div id="createAccountView" style="display:none">
+      <h2 class="signin-title">Create account</h2>
+      <div class="form-group">
+        <label>Your name</label>
+        <input type="text" id="regName" placeholder="First and last name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="text" id="regEmail" placeholder="Email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="At least 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Re-enter password</label>
+        <input type="password" id="regPassword2" placeholder="Re-enter password">
+      </div>
+      <button class="signin-btn" id="doRegister">Create your Amazon account</button>
+      <p class="signin-legal">By creating an account, you agree to Amazon's <a href="#">Conditions of Use</a>.</p>
+      <div class="signin-divider"><span>Already have an account?</span></div>
+      <button class="create-account-btn" id="goSignin">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DELIVERY LOCATION MODAL
+══════════════════════════════════════════ -->
+<div class="modal-backdrop" id="locationBackdrop">
+  <div class="location-modal" id="locationModal">
+    <button class="modal-close-x" id="closeLocation">✕</button>
+    <h2 class="location-title">📍 Choose your location</h2>
+    <p class="location-sub">Delivery options and speeds may vary depending on location.</p>
+
+    <div id="locationSignedIn" style="display:none">
+      <p class="location-hint">Signed in as <strong id="locationUserName"></strong></p>
+    </div>
+
+    <div class="location-tabs">
+      <button class="loc-tab active" data-tab="country">Country / Region</button>
+      <button class="loc-tab" data-tab="city">City / Pincode</button>
+    </div>
+
+    <div class="loc-tab-content" id="tabCountry">
+      <div class="country-grid" id="countryGrid"></div>
+    </div>
+
+    <div class="loc-tab-content" id="tabCity" style="display:none">
+      <div class="form-group">
+        <label>Enter city or pincode</label>
+        <input type="text" id="cityInput" placeholder="e.g. Karachi, London, 10001">
+      </div>
+      <button class="signin-btn" id="applyCity">Apply</button>
+    </div>
+
+    <div class="selected-location-bar" id="selectedLocationBar" style="display:none">
+      ✅ Delivering to: <strong id="selectedLocationText"></strong>
+      <button class="change-loc-btn" id="changeLocBtn">Change</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ORDERS MODAL
+══════════════════════════════════════════ -->
+<div class="modal-backdrop" id="ordersBackdrop">
+  <div class="orders-modal" id="ordersModal">
+    <button class="modal-close-x" id="closeOrders">✕</button>
+    <h2 class="orders-title">📦 Your Orders</h2>
+    <div id="ordersContent"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
+<header class="header">
+  <a class="logo" href="amazon.html">amaz<span>o</span>n</a>
+
+  <button class="deliver-btn" id="deliverBtn">
+    <span class="deliver-icon">📍</span>
+    <div class="deliver-text">
+      <span class="deliver-top">Deliver to</span>
+      <span class="deliver-city" id="deliverCity">Lahore</span>
+    </div>
+  </button>
+
+  <div class="search-wrap">
+    <select class="search-category" id="searchCategory">
+      <option value="all">All</option>
+      <option value="electronics">Electronics</option>
+      <option value="sports">Sports</option>
+      <option value="clothing">Clothing</option>
+      <option value="food">Food &amp; Kitchen</option>
+      <option value="books">Books</option>
+    </select>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search Amazon...">
+    <button class="search-btn" id="searchBtn">🔍</button>
+  </div>
+
+  <div class="header-right">
+    <!-- Account -->
+    <div class="header-account" id="headerAccount">
+      <button class="header-btn" id="accountBtn">
+        <span class="hb-top">Hello, <span id="accountName">sign in</span></span>
+        <span class="hb-bot">Account &amp; Lists ▾</span>
+      </button>
+      <div class="account-dropdown" id="accountDropdown">
+        <div id="dropdownSignedOut">
+          <button class="dd-signin-btn" id="ddSigninBtn">Sign in</button>
+          <p class="dd-new">New customer? <a href="#" id="ddCreateBtn">Start here</a></p>
+        </div>
+        <div id="dropdownSignedIn" style="display:none">
+          <p class="dd-welcome">👋 Hello, <strong id="ddUserName"></strong></p>
+          <hr class="dd-hr">
+          <a href="#" class="dd-link" id="ddOrders">📦 Your Orders</a>
+          <a href="#" class="dd-link" id="ddWishlist">❤️ Your Wishlist</a>
+          <a href="#" class="dd-link" id="ddSignOut">🚪 Sign Out</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Returns & Orders -->
+    <button class="header-btn" id="returnsBtn">
+      <span class="hb-top">Returns</span>
+      <span class="hb-bot">&amp; Orders</span>
+    </button>
+
+    <!-- Cart -->
+    <button class="cart-btn" id="cartBtn">
+      <span class="cart-icon-wrap">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+      </span>
+      <span class="cart-label">Cart</span>
+    </button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════ -->
+<nav class="navbar">
+  <button class="nav-item" data-filter="all">☰ All</button>
+  <button class="nav-item" data-filter="all">🔥 Today's Deals</button>
+  <button class="nav-item" data-filter="electronics">📱 Electronics</button>
+  <button class="nav-item" data-filter="sports">⚽ Sports &amp; Outdoors</button>
+  <button class="nav-item" data-filter="clothing">👕 Fashion</button>
+  <button class="nav-item" data-filter="food">🍳 Kitchen &amp; Food</button>
+  <button class="nav-item" data-filter="all">🏠 Home &amp; Garden</button>
+  <button class="nav-item" data-filter="books">📚 Books</button>
+  <button class="nav-item" id="navPrime">⭐ Prime</button>
+  <button class="nav-item" id="navCustomerService">💬 Customer Service</button>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO BANNER
+══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide active" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)">
+      <div class="hero-content">
+        <span class="hero-tag">🔥 Limited Time</span>
+        <h1>Summer Sale — Up to <span>70% OFF</span></h1>
+        <p>Millions of deals across Electronics, Fashion, Sports & more</p>
+        <button class="hero-cta" onclick="document.querySelector('.main').scrollIntoView({behavior:'smooth'})">Shop the Sale →</button>
+      </div>
+    </div>
+    <div class="hero-slide" style="background:linear-gradient(135deg,#0d1b2a,#1b263b,#415a77)">
+      <div class="hero-content">
+        <span class="hero-tag">⭐ Prime Members</span>
+        <h1>FREE & Fast <span>Delivery</span> Worldwide</h1>
+        <p>Same-day delivery available in 50+ cities across 30 countries</p>
+        <button class="hero-cta" onclick="showToast('Join Prime for FREE delivery! 🚀','⭐')">Join Prime →</button>
+      </div>
+    </div>
+    <div class="hero-slide" style="background:linear-gradient(135deg,#1a0533,#2d1b69,#11998e)">
+      <div class="hero-content">
+        <span class="hero-tag">📱 New Arrivals</span>
+        <h1>Latest <span>Tech Gadgets</span> Just Dropped</h1>
+        <p>Shop the newest electronics from top brands worldwide</p>
+        <button class="hero-cta" onclick="filterProducts('electronics')">Explore Tech →</button>
+      </div>
+    </div>
+  </div>
+  <button class="hero-prev" id="heroPrev">‹</button>
+  <button class="hero-next" id="heroNext">›</button>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FILTERS BAR
+══════════════════════════════════════════ -->
+<div class="filters-bar">
+  <span class="filters-label">Filter:</span>
+  <button class="filter-chip active" data-filter="all">All</button>
+  <button class="filter-chip" data-filter="electronics">📱 Electronics</button>
+  <button class="filter-chip" data-filter="sports">⚽ Sports</button>
+  <button class="filter-chip" data-filter="clothing">👕 Clothing</button>
+  <button class="filter-chip" data-filter="food">🍔 Food</button>
+  <button class="filter-chip" data-filter="books">📚 Books</button>
+  <div class="filter-right">
+    <select class="sort-select" id="sortSelect">
+      <option value="default">Sort: Featured</option>
+      <option value="price-low">Price: Low → High</option>
+      <option value="price-high">Price: High → Low</option>
+      <option value="rating">Avg. Rating</option>
+      <option value="newest">Newest First</option>
+    </select>
+  </div>
+</div>
+
+<!-- Search Results Info Bar -->
+<div class="search-results-bar" id="searchResultsBar">
+  <span id="searchResultsText"></span>
+  <button class="clear-search" id="clearSearch">✕ Clear</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN PRODUCTS
+══════════════════════════════════════════ -->
+<main class="main">
+  <div class="products-grid" id="productsGrid"></div>
+</main>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-top">
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</button>
+  </div>
+  <div class="footer-mid">
+    <div class="footer-col">
+      <h4>Get to Know Us</h4>
+      <a href="#">About Amazon</a>
+      <a href="#">Careers</a>
+      <a href="#">Press Releases</a>
+      <a href="#">Amazon Cares</a>
+    </div>
+    <div class="footer-col">
+      <h4>Make Money with Us</h4>
+      <a href="#">Sell on Amazon</a>
+      <a href="#">Become an Affiliate</a>
+      <a href="#">Advertise Your Products</a>
+      <a href="#">Self-Publish</a>
+    </div>
+    <div class="footer-col">
+      <h4>Payment Products</h4>
+      <a href="#">Amazon Business Card</a>
+      <a href="#">Shop with Points</a>
+      <a href="#">Reload Your Balance</a>
+      <a href="#">Amazon Currency Converter</a>
+    </div>
+    <div class="footer-col">
+      <h4>Let Us Help You</h4>
+      <a href="#">Your Account</a>
+      <a href="#">Your Orders</a>
+      <a href="#">Shipping Rates</a>
+      <a href="#">Returns &amp; Replacements</a>
+      <a href="#">Help</a>
+    </div>
+  </div>
+  <div class="footer-bot">
+    <div class="footer-logo">amaz<span>o</span>n</div>
+    <p>© 2024 Amazon Clone Project. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Conditions of Use</a>
+      <a href="#">Privacy Notice</a>
+      <a href="#">Interest-Based Ads</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     TOAST
+══════════════════════════════════════════ -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY
+══════════════════════════════════════════ -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ══════════════════════════════════════════
+     CART DRAWER
+══════════════════════════════════════════ -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <h2>🛒 Shopping Cart</h2>
+    <button class="close-drawer" id="closeCartBtn">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="drawer-footer">
+    <div class="total-row">
+      <span>Subtotal (<span id="cartItemCount">0</span> items):</span>
+      <span id="cartTotal">$0.00</span>
+    </div>
+    <div class="cart-prime-note">⭐ FREE delivery for Prime members</div>
+    <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout →</button>
+    <button class="continue-btn" id="continueShoppingBtn">Continue Shopping</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PRODUCT DETAIL MODAL
+══════════════════════════════════════════ -->
+<div class="modal-backdrop" id="productBackdrop">
+  <div class="product-modal" id="productModal">
+    <button class="modal-close-x" id="closeProduct">✕</button>
+    <div class="product-modal-inner">
+      <div class="product-modal-img" id="productModalImg"></div>
+      <div class="product-modal-info">
+        <div class="product-modal-name" id="productModalName"></div>
+        <div class="product-modal-brand" id="productModalBrand"></div>
+        <div class="product-modal-stars" id="productModalStars"></div>
+        <hr class="modal-hr">
+        <div class="product-modal-price-wrap">
+          <div class="product-modal-price" id="productModalPrice"></div>
+          <div class="product-modal-savings" id="productModalSavings"></div>
+        </div>
+        <div class="product-modal-prime" id="productModalPrime"></div>
+        <div class="product-modal-tracking" id="productModalTracking"></div>
+        <hr class="modal-hr">
+        <div class="product-modal-desc" id="productModalDesc"></div>
+        <div class="product-modal-qty">
+          <label>Quantity:</label>
+          <div class="qty-control">
+            <button class="qty-btn" id="modalQtyMinus">−</button>
+            <span class="qty-display" id="modalQtyDisplay">1</span>
+            <button class="qty-btn" id="modalQtyPlus">+</button>
+          </div>
+        </div>
+        <button class="modal-cart-btn" id="modalAddToCart">🛒 Add to Cart</button>
+        <button class="modal-buy-btn" id="modalBuyNow">⚡ Buy Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="scripts/bundle.js"></script>
+</body>
+</html>
